@@ -22,10 +22,89 @@ function recieveMessage(queue) {
     })
 }
 
-const direct_queue = "test-direct"
+
+function publishMessage(msg, exchange) {
+    connect(rabbitMqUrl, opt, (err, connection) => {
+        if (err) {
+            console.log("Error connecting")
+            console.error(err)
+            return
+        }
+
+        connection.createChannel((cErr, channel) => {
+            if (cErr) {
+                console.log("Error creating channel")
+                console.error(cErr)
+                return
+            }
+
+            channel.assertExchange(exchange, 'fanout', {
+                durable: false
+            });
+            channel.publish(exchange, '', Buffer.from(msg))//empty string means that we don't want to send to any specific queue
+            console.log(" [x] Sent %s", msg)
+        })
+        // setTimeout(function() {
+        //     connection.close()
+        //     process.exit(0)
+        // }, 500)
+    })
+}
+
+
+function recievePublishedMessage(exchange) {
+    connect(rabbitMqUrl, opt, (err, connection) => {
+        if (err) {
+            console.log("Error connecting")
+            console.error(err)
+            return
+        }
+
+        connection.createChannel(function(cErr, channel) {
+            if (cErr) {
+                console.log("Error creating channel")
+                console.error(cErr)
+                return
+            }
+
+            channel.assertExchange(exchange, 'fanout', {
+                durable: false
+            });
+
+            channel.assertQueue('',
+                {
+                    exclusive: true
+                },
+                function(queueErr, q) {
+                if (queueErr) {
+                    console.log("Error connecting")
+                    console.error(queueErr)
+                    return
+                }
+                console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", q.queue);
+                channel.bindQueue(q.queue, exchange, '');//empty string means that we don't care about what queue we are binding to
+
+                channel.consume(q.queue, function(msg) {
+                    if(msg.content) {
+                        console.log(" [x] %s", msg.content.toString());
+                    }
+                }, {
+                    noAck: true
+                });
+            });
+        });
+    })
+}
+
+const directQueue = "test-direct"
+const exchange = "logs"
+
 
 export {
     sendMessage,
     recieveMessage,
-    direct_queue
+    directQueue,
+    exchange,
+    recievePublishedMessage,
+    publishMessage
 }

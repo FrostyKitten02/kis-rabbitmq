@@ -1,4 +1,4 @@
-import {direct_queue, recieveMessage, sendMessage} from "../main.mjs";
+import {directQueue, recieveMessage} from "../main.mjs";
 
 
-recieveMessage(direct_queue)
+recieveMessage(directQueue)

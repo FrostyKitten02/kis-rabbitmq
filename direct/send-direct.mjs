@@ -1,4 +1,4 @@
-import {direct_queue, sendMessage} from "../main.mjs";
+import {directQueue, sendMessage} from "../main.mjs";
 
 
-sendMessage("Hello world!", direct_queue)
+sendMessage("Hello world!", directQueue)
