@@ -1,3 +1,10 @@
+import {makeConnection} from "../main.mjs";
+
+function recievePublishedMessage(exchange) {
+    makeConnection((err, connection) => {
+        listenForPublishedMessageCallback(err, connection, exchange)
+    })
+}
 
 function listenForPublishedMessageCallback(err, connection, exchange) {
     if (err) {
@@ -46,6 +53,12 @@ function listenForMessages(err, channel, exchange) {
         });
 }
 
+function publishMessage(msg, exchange) {
+    makeConnection((err, connection) => {
+        publishMessageCallback(err, connection, exchange, msg)
+    })
+}
+
 function publishMessageCallback(err, connection, exhange, msg) {
     if (err) {
         console.log("Error connecting")
@@ -54,7 +67,7 @@ function publishMessageCallback(err, connection, exhange, msg) {
     }
 
     connection.createChannel((err2, channel) => {
-        publihsMessageToExchange(err2, channel, msg, exchangeName)
+        publishMessageToExchange(err2, channel, msg, exhange)
     })
     setTimeout(function() {
         connection.close()
@@ -62,7 +75,7 @@ function publishMessageCallback(err, connection, exhange, msg) {
     }, 500)
 }
 
-function publihsMessageToExchange(err, channel, msg, exchange) {
+function publishMessageToExchange(err, channel, msg, exchange) {
     if (err) {
         console.log("Error creating channel")
         console.error(err)
@@ -79,6 +92,6 @@ function publihsMessageToExchange(err, channel, msg, exchange) {
 
 
 export {
-    publishMessageCallback,
-    listenForPublishedMessageCallback
+    publishMessage,
+    recievePublishedMessage
 }

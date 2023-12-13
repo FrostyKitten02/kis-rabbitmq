@@ -1,3 +1,11 @@
+import {makeConnection} from "../main.mjs";
+
+function sendMessage(msg, queue) {
+    makeConnection(async (err, connection) => {
+        await createConnectionCallbackSendMessage(err, connection, msg, queue)
+    })
+}
+
 async function createConnectionCallbackSendMessage(err, connection, msg, queue) {
     if (err) {
         console.log("Connection failed")
@@ -14,6 +22,12 @@ async function createConnectionCallbackSendMessage(err, connection, msg, queue) 
             process.exit(0)
         }, 100
     )
+}
+
+function recieveMessage(queue) {
+    makeConnection(async (err, connection) => {
+        await createConnectionCallbackListenForMessage(err, connection, queue)
+    })
 }
 
 async function createConnectionCallbackListenForMessage(err, connection, queue) {
@@ -63,6 +77,6 @@ function receiveMessageCallback(err, channel, queue) {
 
 
 export {
-    createConnectionCallbackSendMessage,
-    createConnectionCallbackListenForMessage
+    recieveMessage,
+    sendMessage
 }
