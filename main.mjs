@@ -1,6 +1,7 @@
 import {connect} from 'amqplib/callback_api.js';
 import {plain} from 'amqplib/lib/credentials.js';
 import {createConnectionCallbackListenForMessage, createConnectionCallbackSendMessage} from "./direct/direct-msg.mjs";
+import {publishMessageCallback} from "./publish-subscribe.mjs";
 const username = 'guest';
 const password = 'guest';
 
@@ -25,29 +26,7 @@ function recieveMessage(queue) {
 
 function publishMessage(msg, exchange) {
     connect(rabbitMqUrl, opt, (err, connection) => {
-        if (err) {
-            console.log("Error connecting")
-            console.error(err)
-            return
-        }
-
-        connection.createChannel((cErr, channel) => {
-            if (cErr) {
-                console.log("Error creating channel")
-                console.error(cErr)
-                return
-            }
-
-            channel.assertExchange(exchange, 'fanout', {
-                durable: false
-            });
-            channel.publish(exchange, '', Buffer.from(msg))//empty string means that we don't want to send to any specific queue
-            console.log(" [x] Sent %s", msg)
-        })
-        // setTimeout(function() {
-        //     connection.close()
-        //     process.exit(0)
-        // }, 500)
+       publishMessageCallback(err, connection, exchange, msg)
     })
 }
 
