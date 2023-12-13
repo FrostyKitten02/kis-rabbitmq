@@ -1,4 +1,4 @@
-import {exchange, publishMessage} from "./main.mjs";
+import {exchangeName, publishMessage} from "./main.mjs";
 
 
-publishMessage("Hello World!", exchange)
+publishMessage("Hello World!", exchangeName)
