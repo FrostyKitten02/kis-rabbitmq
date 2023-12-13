@@ -1,6 +1,6 @@
 import {connect} from 'amqplib/callback_api.js';
 import {plain} from 'amqplib/lib/credentials.js';
-import {createConnectionCallbackListenForMessage, createConnectionCallbackSendMessage} from "./direct-msg.mjs";
+import {createConnectionCallbackListenForMessage, createConnectionCallbackSendMessage} from "./direct/direct-msg.mjs";
 const username = 'guest';
 const password = 'guest';
 
